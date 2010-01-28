@@ -5,15 +5,17 @@ require 'spec/runner/formatter/base_formatter'
 module Processing ; SKETCH_PATH = __FILE__ ; end
 
 class SpecSketch < Processing::App
+  full_screen
   load_library :opengl
 
   class Cube
     attr_accessor :status
     attr_accessor :rotation
+    attr_accessor :animation_counter
 
-    def initialize(rotation = 0.0, status = nil)
-      @rotation = rotation
+    def initialize
       @status = status
+      @animation_counter = 0
     end
 
     def draw
@@ -29,9 +31,11 @@ class SpecSketch < Processing::App
       end
 
       push_matrix
-        rotate(@rotation)
-        box 40
+        rotate(@animation_counter / 10.0, @animation_counter / 10.0, 0.0, 0.0)
+        box 40 + @animation_counter * 5
       pop_matrix
+
+      @animation_counter -= 1 if @animation_counter > 0
     end
   end
 
@@ -49,10 +53,14 @@ class SpecSketch < Processing::App
     @number_of_examples = num
     puts "#{num} #{ caller.inspect }"
     @results = []
+    @cubes = Array.new(num) { Cube.new }
   end
 
   def add_result!(result)
     @results << result
+    cube = @cubes[@results.size - 1]
+    cube.status = result
+    cube.animation_counter = 10
   end
 
   def draw
@@ -64,12 +72,12 @@ class SpecSketch < Processing::App
     examples_per_row = Math::sqrt(number_of_examples).ceil
     box_width = self.width / examples_per_row.to_f
     box_height = self.height / examples_per_row.to_f
-    number_of_examples.times do |i|
-      x = (i % examples_per_row) * box_width
-      y = (i / examples_per_row) * box_height
+    @cubes.each_with_index do |cube, i|
+      x = (i % examples_per_row) * box_width + 40
+      y = (i / examples_per_row) * box_height + 40
       push_matrix
         translate(x, y)
-        Cube.new(0.0, @results[i]).draw 
+        cube.draw
       pop_matrix
     end
 
