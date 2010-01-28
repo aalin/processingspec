@@ -11,8 +11,9 @@ class SpecSketch < Processing::App
     attr_accessor :status
     attr_accessor :rotation
 
-    def initialize(rotation = 0.0)
+    def initialize(rotation = 0.0, status = nil)
       @rotation = rotation
+      @status = status
     end
 
     def draw
@@ -68,7 +69,7 @@ class SpecSketch < Processing::App
       y = (i / examples_per_row) * box_height
       push_matrix
         translate(x, y)
-        Cube.new(0.0).draw 
+        Cube.new(0.0, @results[i]).draw 
       pop_matrix
     end
 
@@ -107,3 +108,4 @@ class ProcessingFormatter < Spec::Runner::Formatter::BaseFormatter
     @sketch.close
   end
 end
+
