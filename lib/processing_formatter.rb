@@ -42,13 +42,11 @@ class SpecSketch < Processing::App
     frame_rate 30
     color_mode RGB, 1
     render_mode(OPENGL)
-
-    reset_number_of_examples!(0)
   end
   
   def reset_number_of_examples!(num)
     @number_of_examples = num
-    puts @number_of_examples
+    puts "#{num} #{ caller.inspect }"
     @results = []
   end
 
@@ -59,13 +57,15 @@ class SpecSketch < Processing::App
   def draw
     background(0)
 
+    return unless number_of_examples
+
     lights
     examples_per_row = Math::sqrt(number_of_examples).ceil
-    puts number_of_examples
+    box_width = self.width / examples_per_row.to_f
+    box_height = self.height / examples_per_row.to_f
     number_of_examples.times do |i|
-      x = (i % examples_per_row) * self.width / examples_per_row.to_f
-      y = (i / examples_per_row) * self.height / examples_per_row.to_f
-      puts x
+      x = (i % examples_per_row) * box_width
+      y = (i / examples_per_row) * box_height
       push_matrix
         translate(x, y)
         Cube.new(0.0).draw 
