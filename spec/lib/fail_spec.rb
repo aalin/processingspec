@@ -5,10 +5,13 @@ end
 
 describe Fail do
   100.times do
-    if (rand(10) % 3).zero?
+    case rand(3)
+    when 0
       it('should fail') { true.should be_false }
-    else
+    when 1
       it('should win') { true.should be_true }
+    else
+      it('should be pending')
     end
   end
 end
